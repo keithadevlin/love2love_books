@@ -29,12 +29,14 @@ resource "aws_lambda_function" "get_mws_sales_report_lambda" {
   handler          = "get_mws_sales_report"
   source_code_hash = "${filebase64sha256("../../../../bin/get_mws_sales_report.zip")}"
   runtime          = "go1.x"
+  timeout          = "900"
 
-  #environment {
-  # variables = {
-  #   foo = "bar"
-  # }
-  #}
+  environment {
+    variables = {
+      SALES_REPORT_BUCKET_NAME = "${aws_s3_bucket.sales_report_download_s3.bucket}"
+      REGION                   = "eu-west-1"
+    }
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "every_ten_minute" {
@@ -43,7 +45,7 @@ resource "aws_cloudwatch_event_rule" "every_ten_minute" {
   schedule_expression = "rate(2 minutes)"
 
   #schedule_expression = "cron(30 * * * ? *)"
-  is_enabled = "true"
+  is_enabled = "false"
 
   depends_on = [
     "aws_lambda_function.get_mws_sales_report_lambda",
@@ -64,11 +66,11 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_get_mws_sales_report_
   source_arn    = "${aws_cloudwatch_event_rule.every_ten_minute.arn}"
 }
 
-# add the lambda cloudwatch logging
-resource "aws_iam_policy" "lambda_logging" {
-  name        = "lambda_logging"
+# add the lambda policy for logging and access to s3
+resource "aws_iam_policy" "lambda_policy" {
+  name        = "lambda_policy"
   path        = "/"
-  description = "IAM policy for logging from a lambda"
+  description = "IAM policy for for lambda"
 
   policy = <<EOF
 {
@@ -82,6 +84,13 @@ resource "aws_iam_policy" "lambda_logging" {
       ],
       "Resource": "arn:aws:logs:*:*:*",
       "Effect": "Allow"
+    },
+  {
+        "Effect": "Allow",
+        "Action": [
+            "s3:*"
+        ],
+        "Resource": "arn:aws:s3:::*"
     }
   ]
 }
@@ -90,5 +99,5 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = "${aws_iam_role.iam_for_lambda.name}"
-  policy_arn = "${aws_iam_policy.lambda_logging.arn}"
+  policy_arn = "${aws_iam_policy.lambda_policy.arn}"
 }
