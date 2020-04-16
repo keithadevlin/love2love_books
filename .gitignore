@@ -1,0 +1,7 @@
+.DS_Store
+.idea/
+bin/
+pkg/lambda/get_mws_sales_report/bin/
+terraform/providers/aws/prod/.terraform/
+
+
