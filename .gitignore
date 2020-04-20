@@ -3,5 +3,9 @@
 bin/
 pkg/lambda/get_mws_sales_report/bin/
 terraform/providers/aws/prod/.terraform/
+pkg/lambda/create_amazon_invoice/data/in/
+pkg/.DS_Store
+pkg/lambda/.DS_Store
+
 
 

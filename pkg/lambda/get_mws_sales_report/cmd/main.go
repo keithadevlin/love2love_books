@@ -6,6 +6,7 @@ import (
 	"github.com/keithadevlin/love2love_books/pkg/lambda/get_mws_sales_report/internal/handler"
 	"github.com/keithadevlin/love2love_books/pkg/lambda/get_mws_sales_report/internal/service"
 	"github.com/keithadevlin/love2love_books/pkg/shared/aws/awscore"
+	"github.com/keithadevlin/love2love_books/pkg/shared/mws"
 	"github.com/keithadevlin/love2love_books/pkg/shared/persistfile"
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
@@ -43,7 +44,9 @@ func main() {
 	log.Infof("finished creating lambda uploader")
 	persistFileClient := persistfile.NewClient(config.SalesReportBucketName, serviceName, uploader)
 
-	s := service.NewService(cfg, persistFileClient)
+	mwsapi := mws.NewAmazonMWSAPI(mwsAccessKey, mwsSecretKey, mwsHost, mwsAuthToken, mwsMarketplaceIDGB, mwsMarketplaceIDDE, mwsSellerId)
+
+	s := service.NewService(cfg, persistFileClient, mwsapi)
 	log.Infof("finished creating new service")
 	h := handler.NewHandler(s)
 	log.Infof("finished creating new handler")

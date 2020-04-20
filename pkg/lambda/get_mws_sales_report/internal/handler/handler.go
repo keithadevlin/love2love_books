@@ -9,6 +9,7 @@ import (
 
 type Service interface {
 	WriteSalesReport(ctx context.Context) error
+	RequestMWSReport(ctx context.Context, reportName string) (string, error)
 }
 
 type Handler struct {
@@ -23,8 +24,17 @@ func NewHandler(s Service) *Handler {
 }
 
 func (h *Handler) ProcessSalesReport(ctx context.Context) error {
+
+	logrus.Infof("Requesting Report")
+	reportRequestId, err := h.service.RequestMWSReport(ctx, "_GET_MERCHANT_LISTINGS_DATA_BACK_COMPAT_")
+	if err != nil {
+		logrus.Infof("error in process sales report ", err)
+		return err
+	}
+	logrus.Infof("ReportRequstId = %s", reportRequestId)
+
 	logrus.Infof("in processSales Report")
-	err := h.service.WriteSalesReport(ctx)
+	err = h.service.WriteSalesReport(ctx)
 	if err != nil {
 		logrus.Infof("error in process sales report ", err)
 		return err

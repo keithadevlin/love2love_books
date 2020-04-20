@@ -12,12 +12,9 @@ import (
 	"time"
 )
 
-
-
-
-//type S3Client interface {
-//	s3iface.S3API
-//}
+type FilePersistor interface {
+	PersistFilePayload(ctx context.Context, fileName string, payload string) (string, error)
+}
 
 //Client
 type Client struct {
@@ -47,7 +44,7 @@ func (c *Client) PersistFilePayload(ctx context.Context, fileName string, payloa
 	_, err := c.Uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(c.BucketName),
 		Key:    aws.String(key),
-		Body: reader,
+		Body:   reader,
 	})
 	if err != nil {
 		logrus.Infof("error storing errored payload to failure bucket. Function %s, Filename: %s, Bucket: %s : %s", c.FunctionName, fileName, c.BucketName, err)

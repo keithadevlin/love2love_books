@@ -34,7 +34,7 @@ func (m *MockPersistFile) EXPECT() *MockPersistFileMockRecorder {
 }
 
 // PersistFilePayload mocks base method
-func (m *MockPersistFile) PersistFilePayload(ctx context.Context, fileName string, payload []byte) (string, error) {
+func (m *MockPersistFile) PersistFilePayload(ctx context.Context, fileName, payload string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PersistFilePayload", ctx, fileName, payload)
 	ret0, _ := ret[0].(string)
@@ -46,4 +46,19 @@ func (m *MockPersistFile) PersistFilePayload(ctx context.Context, fileName strin
 func (mr *MockPersistFileMockRecorder) PersistFilePayload(ctx, fileName, payload interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PersistFilePayload", reflect.TypeOf((*MockPersistFile)(nil).PersistFilePayload), ctx, fileName, payload)
+}
+
+// requestMWSReport mocks base method
+func (m *MockPersistFile) requestMWSReport(reportName string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "requestMWSReport", reportName)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// requestMWSReport indicates an expected call of requestMWSReport
+func (mr *MockPersistFileMockRecorder) requestMWSReport(reportName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "requestMWSReport", reflect.TypeOf((*MockPersistFile)(nil).requestMWSReport), reportName)
 }
